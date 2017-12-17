@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import SysStatus from './components/SysStatus';
+import AuthenticationForm from './components/AuthenticationForm';
 
 class App extends Component {
   render() {
@@ -12,6 +13,7 @@ class App extends Component {
           <h1 className="App-title">Welcome to Akira</h1>
         </header>
       <SysStatus />
+      <AuthenticationForm />
         <p className="App-intro">
         </p>
       </div>

@@ -15,10 +15,14 @@ class SysStatus extends Component {
   };
 
   componentDidMount() {
-    fetch('https://sandbox.akira.md/api/system_status')
+    fetch('https://sandbox.akira.md/api/system_status', {
+      method: 'get',
+      mode: 'no-cors',
+    })
     .then(results => {
       return results.json();
-    }).then(data => {
+    })
+  .then(data => {
       //@TODO make sure to check that system is online
       let isOpenForBusiness = data.is_open_for_business;
       let openHoursToday = data.open_hours_today;
@@ -27,6 +31,9 @@ class SysStatus extends Component {
         openHoursToday: openHoursToday,
       });
       console.log(this.state);
+    })
+    .catch(err => {
+      console.log('error caught =========');
     });
   };
 
@@ -48,7 +55,6 @@ class SysStatus extends Component {
       };
 
       const offset = new Date().getTimezoneOffset();
-
       /* If we start supporting French we can pass in a different
        locale from the state */
       const openTime = toTimeString(hours.open_at);
@@ -56,6 +62,17 @@ class SysStatus extends Component {
       console.log('++++++', hours, openTime, closeTime);
       return <p>Hours of opperation: {openTime} - {closeTime}</p>;
     };
+
+    if (!this.state.online) {
+      return (
+        <div className='container'>
+        <div className="sysStatus">
+          Akira is offline right now.  Please try again in a few minutes or
+          contact us at <a href="mailto:support@akira.md">support@akira.md</a>
+        </div>
+        </div>
+      );
+    }
 
     return (
       <div className='container'>

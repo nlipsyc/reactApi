@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
-import './App.css';
+import './vendor/bootstrap.css';
 import SysStatus from './components/SysStatus';
 import AuthenticationForm from './components/AuthenticationForm';
 

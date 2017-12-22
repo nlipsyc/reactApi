@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import MedicList from './MedicList';
+import MedicContainer from './MedicContainer';
 
 class AuthenticationForm extends Component {
   constructor() {
@@ -10,6 +10,7 @@ class AuthenticationForm extends Component {
         userEmail: '',
         userPassword: '',
       },
+      medicsOnCall: {},
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -46,35 +47,29 @@ class AuthenticationForm extends Component {
             }
           })
   .then(medicsOnCall => {
-            console.log('MEDICS ON CALL', medicsOnCall);
+            this.setState({ medicsOnCall: medicsOnCall });
           });
         });
 
-// const token = data.token;
-//
-// const responseData = data;
-// sessionStorage.setItem('authToken', responseData.token);
-// this.setState({ authToken:  responseData.token});
-// });
     event.preventDefault();
   }
 
-handleChange = (fieldName) => (event) => {
-  const auth = this.state.userCreds;
-  const newAuth = {
-    ...auth,
-    [fieldName]: event.target.value,
+  handleChange = (fieldName) => (event) => {
+    const auth = this.state.userCreds;
+    const newAuth = {
+      ...auth,
+      [fieldName]: event.target.value,
+    };
+    this.setState({ userCreds: newAuth });
   };
-  this.setState({ userCreds: newAuth });
-};
 
-render() {
-  return (
+  render() {
+    return (
     <div>
       <form onSubmit={this.handleSubmit}>
         <label>
           Email
-          <input type='text' onChange={this.handleChange('userEmail')} value={this.state.userCreds.userEmail}/>
+        <input type='text' onChange={this.handleChange('userEmail')} value={this.state.userCreds.userEmail}/>
         </label>
         <label>
           Password
@@ -82,6 +77,7 @@ render() {
         </label>
         <input type='submit' value='Log in' />
       </form>
+      <MedicContainer authToken={this.state.authToken} medicsOnCall={this.state.medicsOnCall} />
     </div>
   );
 };

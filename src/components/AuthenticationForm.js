@@ -10,7 +10,8 @@ class AuthenticationForm extends Component {
         userEmail: '',
         userPassword: '',
       },
-      medicsOnCall: {},
+      medicsInfo: {},
+      medicsImages: {},
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -34,6 +35,7 @@ class AuthenticationForm extends Component {
   .then(auth => {
           console.log('AUTH', auth);
           const headers = new Headers({ 'Authorization': auth.token, });
+          this.setState({ authToken: auth.token });
           fetch('https://sandbox.akira.md/api/medics/on_call', {
             method: 'get',
             headers: headers,
@@ -47,10 +49,33 @@ class AuthenticationForm extends Component {
             }
           })
   .then(medicsOnCall => {
-            this.setState({ medicsOnCall: medicsOnCall });
+            this.setState({ medicsInfo: medicsOnCall });
+
+            const headers = new Headers({ 'Authorization': this.state.authToken, });
+            console.log(medicsOnCall);
+            Promise.all(
+              Object.keys(medicsOnCall).map((k) =>
+              Promise.all([
+                k,
+                fetch(medicsOnCall[k].avatar.url, {
+                  method: 'get',
+                  headers: headers,
+                  credentails: 'include',
+                  mode: 'cors',
+                })
+              ])
+                .then(kres => Promise.all([kres[0], kres[1].blob()]))
+                .then(kblob => {
+                  return { [kblob[0]]: kblob[1] }
+                })
+              ))
+              .then(imgBlobs => Object.assign(...imgBlobs)).then(imgObj => {
+                this.setState({ medicsImages: imgObj });
+              })
+          .then(allProm => {console.log(allProm);});
+
           });
         });
-
     event.preventDefault();
   }
 
@@ -77,7 +102,7 @@ class AuthenticationForm extends Component {
         </label>
         <input type='submit' value='Log in' />
       </form>
-      <MedicContainer authToken={this.state.authToken} medicsOnCall={this.state.medicsOnCall} />
+      <MedicContainer medicsInfo={this.state.medicsInfo} medicsImages={this.state.medicsImages}/>
     </div>
   );
 };

@@ -4,45 +4,30 @@ class MedicContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      medicsOnCall: {},
-      authToken: '',
+      medicsInfo: {},
+      medicsImages: {},
       loaded: false,
     };
   }
 
   componentWillReceiveProps (newProps) {
-    console.log('WILL RECEIVE PROPS', newProps);
-    if (true || newProps.medicsOnCall !== this.props.medicsOnCall) {
+    if (newProps.medicsInfo !== this.props.medicsInfo) {
+      const loaded = newProps.medicsInfo ? newProps.medicsInfo.hasOwnProperty(0) : false;
       this.setState({
-        medicsOnCall: newProps.medicsOnCall,
-        authToken: newProps.authToken,
-        loaded: newProps.medicsOnCall.hasOwnProperty(0),
+        medicsInfo: newProps.medicsInfo,
+        medicsImages: newProps.medicsImages,
+        loaded: loaded,
       });
     }
   }
 
-  componentDidMount() {
-    console.log('STATE SHOULD HAVE CHANGED', this.state);
-
-    const avatarCalls = this.state.loaded ?
-                        this.state.medicsOnCall.reduce(
-                          (acc, key) => acc.push({ key: this.state.medicsOnCall[key].avatar.url }))
-                        : null;
-    console.log('avatar calls ----', avatarCalls);
-
-    // fetch('https://sandbox.akira.md/api/medics/on_call', {
-    //   method: 'get',
-    //   headers: headers,
-    //   credentails: 'include',
-    //   mode: 'cors',
-    // })
-  }
-
+// @MATT This would have eventually called a MedicCard for each medic
   render() {
     return (
       this.state.loaded &&
       <div>
-      <p>MEDIC LIST</p>
+        <h1>MEDIC LIST</h1>
+        <p>{ JSON.stringify(this.state.medicsInfo) }</p>
       </div>
     );
   };

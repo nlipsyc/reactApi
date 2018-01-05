@@ -19,7 +19,7 @@ class AuthenticationForm extends Component {
   }
 
   handleSubmit(event) {
-    fetch('https://sandbox.akira.md/api/auth', {
+    fetch('https://cors-anywhere.herokuapp.com/https://sandbox.akira.md/api/auth', {
       method: 'post',
       body: JSON.stringify({
         email: this.state.userCreds.userEmail,
@@ -36,7 +36,7 @@ class AuthenticationForm extends Component {
           console.log('AUTH', auth);
           const headers = new Headers({ 'Authorization': auth.token, });
           this.setState({ authToken: auth.token });
-          fetch('https://sandbox.akira.md/api/medics/on_call', {
+          fetch('https://cors-anywhere.herokuapp.com/https://sandbox.akira.md/api/medics/on_call', {
             method: 'get',
             headers: headers,
             credentails: 'include',
@@ -53,26 +53,31 @@ class AuthenticationForm extends Component {
 
             const headers = new Headers({ 'Authorization': this.state.authToken, });
             console.log(medicsOnCall);
-            Promise.all(
-              Object.keys(medicsOnCall).map((k) =>
-              Promise.all([
-                k,
-                fetch(medicsOnCall[k].avatar.url, {
-                  method: 'get',
-                  headers: headers,
-                  credentails: 'include',
-                  mode: 'cors',
-                })
-              ])
-                .then(kres => Promise.all([kres[0], kres[1].blob()]))
-                .then(kblob => {
-                  return { [kblob[0]]: kblob[1] }
-                })
-              ))
-              .then(imgBlobs => Object.assign(...imgBlobs)).then(imgObj => {
-                this.setState({ medicsImages: imgObj });
-              })
-          .then(allProm => {console.log(allProm);});
+
+            // @MATT None of this is working, and it's *not* good code
+            // but I'm leaving it here to show that I at least
+            // tried to get something out
+            //
+            //   Promise.all(
+            //     Object.keys(medicsOnCall).map((k) =>
+            //     Promise.all([
+            //       k,
+            //       fetch(medicsOnCall[k].avatar.url, {
+            //         method: 'get',
+            //         headers: headers,
+            //         credentails: 'include',
+            //         mode: 'cors',
+            //       })
+            //     ])
+            //       .then(kres => Promise.all([kres[0], kres[1].blob()]))
+            //       .then(kblob => {
+            //         return { [kblob[0]]: kblob[1] }
+            //       })
+            //     ))
+            //     .then(imgBlobs => Object.assign(...imgBlobs)).then(imgObj => {
+            //       this.setState({ medicsImages: imgObj });
+            //     })
+            // .then(allProm => {console.log(allProm);});
 
           });
         });

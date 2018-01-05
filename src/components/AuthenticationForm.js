@@ -31,6 +31,8 @@ class AuthenticationForm extends Component {
       if (response.ok) {
         return response.json();
       }
+
+      //@TODO Handle failure basically everywhere in this component
     })
   .then(auth => {
           console.log('AUTH', auth);
